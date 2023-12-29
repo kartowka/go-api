@@ -11,13 +11,13 @@ import (
 type MatchController struct {}
 
 type createMatchInput struct {
-	RoomID string `json:"room_id" binding:"required"`
-	PlayerUsername string `json:"player_username" binding:"required"`
+	Username 	string 	`json:"username" binding:"required"`
+	RoomID		string		`json:"room_id" binding:"required"`
 }
 
 func (controller MatchController) JoinMatch (c* gin.Context){
 	var input createMatchInput
-	if err := c.ShouldBindJSON(&input); err != nil {
+		if err := c.ShouldBindJSON(&input); err != nil {
 		var response = ErrorResponse{
 			Msg: "Validation Error",
 			Err: err,
@@ -25,7 +25,7 @@ func (controller MatchController) JoinMatch (c* gin.Context){
 		c.AbortWithStatusJSON(http.StatusOK, response)
 		return
 	}
-	isPlayerJoined, err := services.MatchService.FindUserInRoom(input.RoomID, input.PlayerUsername)
+	isPlayerJoined, err := services.MatchService.FindUserInRoom(input.Username, input.RoomID)
 	if err != nil {
 		var response = ErrorResponse{
 			Msg: "Failed to Join Match",
@@ -35,7 +35,7 @@ func (controller MatchController) JoinMatch (c* gin.Context){
 		return
 	}
 	fmt.Println(isPlayerJoined)
-	match,err := services.MatchService.PlayerJoinRoom(input.RoomID, input.PlayerUsername)
+	match,err := services.MatchService.PlayerJoinRoom( input.Username,input.RoomID)
 	if err != nil {
 		var response = ErrorResponse{
 			Msg: "Failed to Join Match",
