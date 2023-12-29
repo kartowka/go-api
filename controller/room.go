@@ -8,12 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PlayerController struct {}
-type createPlayerInput struct {
-	Username string `json:"username" binding:"required"`
+type RoomController struct {}
+
+type createRoomInput struct {
+	OwnerUsername string `json:"owner_username"`
+	Title string `json:"title"`
+	Description string `json:"description"`
 }
-func (controller PlayerController) CreatePlayer(c *gin.Context) {
-	var input createPlayerInput
+
+func (controller RoomController) CreateRoom (c *gin.Context) {
+	var input createRoomInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		var response = ErrorResponse{
 			Msg: "Validation Error",
@@ -22,21 +26,19 @@ func (controller PlayerController) CreatePlayer(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, response)
 		return
 	}
-
-	player, err := services.PlayerService.CreateOne(input.Username)
+	room,err := services.RoomService.CreateOne(input.OwnerUsername, input.Title, input.Description)
 	if err != nil {
 		var response = ErrorResponse{
-			Msg: "Failed to Create Player",
+			Msg: "Failed to Create Room",
 			Err: err,
 		}
 		c.AbortWithStatusJSON(http.StatusOK, response)
 		return
 	}
-
-	var responseString = fmt.Sprintf("Successfully created a new player with username : %s", player.Username)
+	var responseString = fmt.Sprintf("Successfully created a new room with owner : %s", room.OwnerUsername)
 	var response = SuccessResponse{
 		Status: true,
-		Msg:    responseString,
+		Msg:   responseString,
 	}
 	c.AbortWithStatusJSON(http.StatusOK, response)
 }
