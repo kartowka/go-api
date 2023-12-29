@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: root # The PostgreSQL user (useful to connect to the database)
+      POSTGRES_PASSWORD: root # The PostgreSQL password (useful to connect to the database)
+      POSTGRES_DB: game # The PostgreSQL default database (automatically created at first launch)
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  postgres-admin:
+    container_name: postgres-admin
+    image: dpage/pgadmin4
+    ports:
+      - '5433:5433'
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 5433
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+volumes:
+  postgres-data:
+  pgadmin-data:
